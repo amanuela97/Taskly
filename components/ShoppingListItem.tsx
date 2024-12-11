@@ -1,22 +1,37 @@
-import { TouchableOpacity, View, Alert, StyleSheet, Text } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Alert,
+  StyleSheet,
+  Text,
+  Pressable,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { theme } from "../theme";
-
+import * as Haptics from "expo-haptics";
 type Props = {
   name: string;
   isCompleted?: boolean;
+  onDelete: () => void;
+  onToggleComplete: () => void;
 };
 
-export function ShoppingListItem({ name, isCompleted }: Props) {
+export function ShoppingListItem({
+  name,
+  isCompleted,
+  onDelete,
+  onToggleComplete,
+}: Props) {
   const handleDelete = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       `Are you sure you want to delete ${name}?`,
       "It will be gone for good",
       [
         {
           text: "Yes",
-          onPress: () => console.log("Ok, deleting."),
+          onPress: () => onDelete(),
           style: "destructive",
         },
         { text: "Cancel", style: "cancel" },
@@ -25,11 +40,12 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
   };
 
   return (
-    <View
+    <Pressable
       style={[
         styles.itemContainer,
         isCompleted ? styles.completedContainer : undefined,
       ]}
+      onPress={onToggleComplete}
     >
       <View style={styles.row}>
         <Entypo
@@ -53,7 +69,7 @@ export function ShoppingListItem({ name, isCompleted }: Props) {
           color={isCompleted ? theme.colorGrey : theme.colorRed}
         />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 }
 
